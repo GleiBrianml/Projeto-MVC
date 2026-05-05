@@ -3,3 +3,18 @@
 ```bash
 pip install -r requirements.txt
 ```
+
+# Inicializar o alembic
+```bash
+python -m alembic init migrations
+```
+
+# Gerar a migrations
+```bash
+python -m alembic revision --autogenerate -m "Criar tabela usuario"
+```
+
+# APlicar a migration
+```bash
+python -m alembic upgrade head
+```
