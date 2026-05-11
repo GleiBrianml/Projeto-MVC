@@ -71,3 +71,6 @@ def get_usuario_logado(request: Request):
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Token inválido"
         )
+    
+
+def get_usuario_opcional(request: Request):)
