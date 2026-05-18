@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ "Editar" if usuario else "Novo" }} Usuário — Estoque</title>
+</head>
+<body>
+    <h1>{{ "Editar" if usuario else "Novo" }} Usuário</h1>
+
+    {% if erro %}
+        <p style="color: red;">{{ erro }}</p>
+    {% endif %}
+
+    <form
+        action="/usuarios/{{ usuario.id ~ '/editar' if usuario else 'novo' }}"
+        method="post"
+    >
+        <label>
+            Nome<br>
+            <input
+                type="text"
+                name="nome"
+                value="{{ usuario.nome if usuario else '' }}"
+                required
+            >
+        </label>
+        <br><br>
+
+        <label>
+            E-mail<br>
+            <input
+                type="email"
+                name="email"
+                value="{{ usuario.email if usuario else '' }}"
+                required
+            >
+        </label>
+        <br><br>
+
+        <label>
+            Perfil<br>
+            <select name="role">
+                <option value="user"  {{ "selected" if usuario and usuario.role == "user"  else "" }}>Usuário</option>
+                <option value="admin" {{ "selected" if usuario and usuario.role == "admin" else "" }}>Admin</option>
+            </select>
+        </label>
+        <br><br>
+
+        <label>
+            Senha {{ "(deixe em branco para manter a atual)" if usuario else "" }}<br>
+            <input
+                type="password"
+                name="senha"
+                {{ "required" if not usuario else "" }}
+                placeholder="{{ 'Nova senha (opcional)' if usuario else 'Senha' }}"
+            >
+        </label>
+        <br><br>
+
+        <button type="submit">
+            {{ "Salvar alterações" if usuario else "Criar usuário" }}
+        </button>
+
+        <a href="/usuarios/">Cancelar</a>
+    </form>
+</body>
+</html>
