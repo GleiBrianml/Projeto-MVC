@@ -5,6 +5,7 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 
 from app.controller import auth_controller
 from app.controller import admin_controller
+from app.controller import categoria_controller
 
 from app.auth import get_usuario_opcional
 
@@ -20,6 +21,8 @@ templates = Jinja2Templates(directory="app/templates")
 # Registrar as rotas do controller de autenticação
 app.include_router(auth_controller.router)
 app.include_router(admin_controller.router)
+app.include_router(categoria_controller.router)
+
 @app.get("/")
 def tela_home(
         request: Request,
