@@ -1,67 +1,83 @@
+<!-- templates/usuarios/form.html-->
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>{{ "Editar" if usuario else "Novo" }} Usuário — Estoque</title>
+    <!--
+        editando é None na criação e o objeto Usuario na edição.
+        O template usa isso para adaptar título, action e campos.
+    -->
+    <title>{{ "Editar" if editando else "Novo" }} Usuário — Estoque</title>
 </head>
 <body>
-    <h1>{{ "Editar" if usuario else "Novo" }} Usuário</h1>
+    <h1>{{ "Editar usuário" if editando else "Novo usuário" }}</h1>
 
     {% if erro %}
         <p style="color: red;">{{ erro }}</p>
     {% endif %}
 
-    <form
-        action="/usuarios/{{ usuario.id ~ '/editar' if usuario else 'novo' }}"
-        method="post"
-    >
-        <label>
-            Nome<br>
-            <input
-                type="text"
-                name="nome"
-                value="{{ usuario.nome if usuario else '' }}"
-                required
-            >
-        </label>
-        <br><br>
+    <!--
+        action muda dinamicamente:
+        - criação → POST /usuarios/novo
+        - edição  → POST /usuarios/{id}/editar
+    -->
+    <form action="{{ '/usuarios/' + editando.id|string + '/editar' if editando else '/usuarios/novo' }}"
+          method="post">
 
-        <label>
-            E-mail<br>
-            <input
-                type="email"
-                name="email"
-                value="{{ usuario.email if usuario else '' }}"
-                required
-            >
+        <label>Nome:
+            <!--
+                value recupera do objeto na edição,
+                ou do dicionário "valores" se houve erro na criação
+            -->
+            <input type="text"
+                   name="nome"
+                   value="{{ editando.nome if editando else (valores.nome if valores else '') }}"
+                   required>
         </label>
-        <br><br>
+        <br>
 
-        <label>
-            Perfil<br>
+        <label>E-mail:
+            <input type="email"
+                   name="email"
+                   value="{{ editando.email if editando else (valores.email if valores else '') }}"
+                   required>
+        </label>
+        <br>
+
+        <label>Senha:
+            <!--
+                Na edição o campo é opcional — deixar vazio mantém a senha atual.
+                Na criação é obrigatório.
+            -->
+            <input type="password"
+                   name="senha"
+                   {{ "placeholder='Deixe vazio para não alterar'" if editando else "required minlength='6'" }}>
+        </label>
+        <br>
+
+        <label>Perfil de acesso:
             <select name="role">
-                <option value="user"  {{ "selected" if usuario and usuario.role == "user"  else "" }}>Usuário</option>
-                <option value="admin" {{ "selected" if usuario and usuario.role == "admin" else "" }}>Admin</option>
+                <!--
+                    selected é definido comparando com o valor atual.
+                    Na criação usa "valores.role" se voltou com erro,
+                    senão deixa "operador" como padrão.
+                -->
+                <option value="operador"
+                    {{ 'selected' if (editando and editando.role == 'operador') or (valores and valores.role == 'operador') else '' }}>
+                    Operador
+                </option>
+                <option value="admin"
+                    {{ 'selected' if (editando and editando.role == 'admin') or (valores and valores.role == 'admin') else '' }}>
+                    Administrador
+                </option>
             </select>
         </label>
-        <br><br>
-
-        <label>
-            Senha {{ "(deixe em branco para manter a atual)" if usuario else "" }}<br>
-            <input
-                type="password"
-                name="senha"
-                {{ "required" if not usuario else "" }}
-                placeholder="{{ 'Nova senha (opcional)' if usuario else 'Senha' }}"
-            >
-        </label>
-        <br><br>
+        <br>
 
         <button type="submit">
-            {{ "Salvar alterações" if usuario else "Criar usuário" }}
+            {{ "Salvar alterações" if editando else "Criar usuário" }}
         </button>
-
-        <a href="/usuarios/">Cancelar</a>
+        <a href="/usuarios">Cancelar</a>
     </form>
 </body>
 </html>
